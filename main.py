@@ -45,6 +45,18 @@ def EncryptFile(path, name):
         encryptedFileFile.write(encryptedFile)
 
 
+def DecryptFile(path, name):
+    with open('mykey.key', 'rb') as mykey:  # Reads encryption key
+        key = mykey.read()
+    f = Fernet(key)
+    with open(path, 'rb') as encrypted_file:
+        encrypted = encrypted_file.read()
+    decryptedFile = f.decrypt(encrypted)
+    DEFName = "Decrypted " + name
+    with open(DEFName, 'wb') as encryptedFileFile:
+        encryptedFileFile.write(decryptedFile)
+
+
 firebase2 = pyrebase.initialize_app(config2)
 database = firebase2.database()
 
@@ -117,7 +129,7 @@ if isConnected == 1:
         pathCL = input()
         path_on_cloud = pathCL
         for i in tqdm(timer):
-            time.sleep(3)
+            time.sleep(0.7)
         EFName = "Encrypted " + name
         storage.child(path_on_cloud).put(EFName)
         id_AutoIncrement = id_AutoIncrement + 1
@@ -142,8 +154,9 @@ if isConnected == 1:
         pathD = input()
         path_on_cloud = pathD
         for i in tqdm(timer):
-            time.sleep(1)
+            time.sleep(0.5)
         storage.child(path_on_cloud).download(path_on_cloud, name)
+        DecryptFile(name, name)
         actionType = 1
         time_stamp = calendar.timegm(current_GMT)
         id_AutoIncrement = id_AutoIncrement + 1
